@@ -4,8 +4,10 @@ import requests
 from flask import Flask, request, jsonify
 from datetime import datetime
 from xml.etree import ElementTree as ET
+from flasgger import Swagger, swag_from
 
 app = Flask(__name__)
+swagger = Swagger(app)
 
 # Global dictionary to store event data
 events_data = {}
@@ -56,6 +58,47 @@ def parse_events_from_xml(xml_text):
 
 # Endpoint to fetch events within a specified time range
 @app.route('/events', methods=['GET'])
+@swag_from({
+    'responses': {
+        200: {
+            'description': 'A list of events within the specified time range',
+            'examples': {
+                'application/json': [
+                    {
+                        'base_event_id': '1',
+                        'title': 'Event Title',
+                        'event_start_date': '2024-07-01T00:00:00',
+                        'event_end_date': '2024-07-02T00:00:00'
+                    }
+                ]
+            }
+        },
+        400: {
+            'description': 'Invalid request parameters',
+            'examples': {
+                'application/json': {
+                    'error': 'Please provide starts_at and ends_at parameters in ISO format (YYYY-MM-DDTHH:MM:SS)'
+                }
+            }
+        }
+    },
+    'parameters': [
+        {
+            'name': 'starts_at',
+            'in': 'query',
+            'type': 'string',
+            'required': True,
+            'description': 'The start date-time in ISO format (YYYY-MM-DDTHH:MM:SS)'
+        },
+        {
+            'name': 'ends_at',
+            'in': 'query',
+            'type': 'string',
+            'required': True,
+            'description': 'The end date-time in ISO format (YYYY-MM-DDTHH:MM:SS)'
+        }
+    ]
+})
 def get_events():
     starts_at_str = request.args.get('starts_at')
     ends_at_str = request.args.get('ends_at')

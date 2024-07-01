@@ -20,7 +20,7 @@ This microservice fetches event data from an external provider's API, stores the
 
    ```
    git clone <repository_url>
-   cd <your_dir>
+   cd Event-Integration-MicroService
 
 2.  Install dependencies:
 
@@ -54,7 +54,12 @@ curl -X GET 'http://localhost:5000/events?starts_at=2023-01-01T00:00:00&ends_at=
 Replace http://localhost:5000 with your actual server URL if deploying
 elsewhere.
 
-## API Documentation
+#API Documentation
+Interactive API documentation is available via Swagger UI. Once the application is running, you can access it at:
+
+```
+http://127.0.0.1:5000/apidocs
+```
 
 ### GET  `/events`
 
